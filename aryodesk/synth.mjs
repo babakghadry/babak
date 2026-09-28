@@ -1,12 +1,18 @@
 // Soundtrack for the AryoDesk film, synthesised from scratch (no samples).
 // 128 BPM, D minor, 8 bars = 15.0 s. Every hit lines up with an event in reel.js.
-//   node synth.mjs  ->  build/aryodesk.wav (48 kHz, 16-bit stereo)
+//   node synth.mjs               ->  build/aryodesk.wav (48 kHz, 16-bit stereo)
+//   node synth.mjs --speed 0.5   ->  build/aryodesk-speed0.5.wav (half tempo, same pitch)
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const SR = 48000, DUR = 15, N = SR * DUR;
+// --speed stretches the arrangement in time (64 BPM at 0.5) without changing pitch:
+// event times and musical durations scale, the voices' own envelopes do not.
+const ai = process.argv.indexOf('--speed');
+const SPEED = ai < 0 ? 1 : +process.argv[ai + 1];
+const S = 1 / SPEED;
+const SR = 48000, DUR = 15, N = Math.round(SR * DUR * S);
 const BPM = 128, B = 60 / BPM, BAR = 4 * B;
 const TAU = Math.PI * 2;
 
@@ -44,7 +50,7 @@ class Biquad {
     return y;
   }
 }
-const at = (t) => Math.round(t * SR);
+const at = (t) => Math.round(t * S * SR);
 const saw = (ph) => 2 * (ph - Math.floor(ph + 0.5));
 
 // -------------------------------------------------------------------- voices
@@ -81,6 +87,7 @@ function hat(t0, amp = 0.12, open = false, pan = 0.25) {
   }
 }
 function bass(t0, dur, m, amp = 0.3) {
+  dur *= S;
   const s0 = at(t0), lp = new Biquad(), f = mtof(m), len = (dur + 0.02) * SR;
   let ph = rnd(), ph2 = rnd();
   for (let i = 0; i < len; i++) {
@@ -93,6 +100,7 @@ function bass(t0, dur, m, amp = 0.3) {
   }
 }
 function pad(t0, dur, notes, amp = 0.05, atk = 0.12, rel = 0.5, cutoff = 1300) {
+  dur *= S;
   const s0 = at(t0), len = (dur + rel) * SR;
   notes.forEach((m) => {
     [-0.09, 0, 0.09].forEach((det, k) => {
@@ -135,7 +143,9 @@ function tick(t0, amp = 0.05, pan = 0) {
 }
 // noise sweep that peaks at tc (dur before it), e.g. transitions
 function whoosh(tc, dur, amp = 0.25, f0 = 300, f1 = 6000, pan0 = -0.7, pan1 = 0.7, tail = 0.12) {
-  const s0 = at(tc - dur), len = (dur + tail) * SR, bp = new Biquad();
+  const s0 = at(tc - dur);
+  dur *= S;
+  const len = (dur + tail) * SR, bp = new Biquad();
   for (let i = 0; i < len; i++) {
     const t = i / SR, u = Math.min(1, t / dur);
     if (i % 16 === 0) bp.set('bp', f0 * Math.pow(f1 / f0, u), 1.2);
@@ -144,7 +154,7 @@ function whoosh(tc, dur, amp = 0.25, f0 = 300, f1 = 6000, pan0 = -0.7, pan1 = 0.
   }
 }
 function riser(t0, t1, amp = 0.2) {
-  const s0 = at(t0), len = (t1 - t0) * SR, hp = new Biquad();
+  const s0 = at(t0), len = (t1 - t0) * S * SR, hp = new Biquad();
   let ph = 0;
   for (let i = 0; i < len; i++) {
     const u = i / len;
@@ -190,6 +200,7 @@ function glitch(t0, dur, amp = 0.18) {
   }
 }
 function glide(t0, dur, f0, f1, amp = 0.08, pan = 0) {
+  dur *= S;
   const s0 = at(t0);
   let ph = 0;
   for (let i = 0; i < dur * SR; i++) {
@@ -390,5 +401,6 @@ for (let i = 0; i < N; i++) {
   pcm.writeInt16LE(Math.round(Math.max(-1, Math.min(1, R[i] * g * f)) * 32767), 46 + i * 4);
 }
 fs.mkdirSync(path.join(ROOT, 'build'), { recursive: true });
-fs.writeFileSync(path.join(ROOT, 'build', 'aryodesk.wav'), pcm);
-console.log(`build/aryodesk.wav  peak ${peak.toFixed(2)} -> normalised`);
+const NAME = SPEED === 1 ? 'aryodesk.wav' : `aryodesk-speed${SPEED}.wav`;
+fs.writeFileSync(path.join(ROOT, 'build', NAME), pcm);
+console.log(`build/${NAME}  peak ${peak.toFixed(2)} -> normalised`);

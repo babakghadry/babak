@@ -4,6 +4,8 @@
 
 **تماشا:** [`aryodesk.mp4`](aryodesk.mp4) (۱۵ ثانیه · 1080p60 · صدای استریو AAC)
 
+**نسخه‌ی نصف سرعت:** [`aryodesk-half-speed.mp4`](aryodesk-half-speed.mp4) (۳۰ ثانیه · 1080p60). این نسخه کُند‌شده‌ی ویدیوی بالا نیست؛ تک‌تک ۱۸۰۰ فریمش دوباره از همان تابع زمان رندر شده و تکرار فریم ندارد. موسیقی‌اش هم با ۶۴ BPM از نو سنتز شده، پس زیر و بمی صدا عوض نشده است.
+
 ![پوستر](poster.jpg)
 
 ## داستان
@@ -34,6 +36,8 @@ cd aryodesk
 node synth.mjs                       # -> build/aryodesk.wav
 node render.mjs                      # -> aryodesk.mp4
 node render.mjs --master             # نسخه‌ی تقریباً بی‌اتلاف
+node synth.mjs --speed 0.5           # موسیقی با نصف سرعت -> build/aryodesk-speed0.5.wav
+node render.mjs --speed 0.5          # همان فیلم با نصف سرعت -> aryodesk-half-speed.mp4
 node render.mjs --stills 3.2,9.8     # فریم‌های تکی -> build/stills/
 node render.mjs --sheet              # کانتکت‌شیت -> build/sheet.png
 ```

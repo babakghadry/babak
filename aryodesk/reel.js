@@ -1416,10 +1416,11 @@
   }
 
   const ACTS = ['تیکت', 'تیکت', 'چت', 'ایجنت', 'ریموت', 'چندمشتری', 'ممیزی', 'آریودسک'];
-  function hud(ctx, t) {
+  // opt.frame: the playback frame index, which differs from t * FPS when rendering at another speed
+  function hud(ctx, t, opt = {}) {
     const a = E.outCubic(prog(t, 0.1, 0.6)) * (1 - E.outCubic(prog(t, 7 * BAR - 0.1, 7 * BAR + 0.3)));
     if (a <= 0) return;
-    const f = Math.min(DUR * FPS - 1, Math.floor(t * FPS + 1e-6));
+    const f = opt.frame ?? Math.min(DUR * FPS - 1, Math.floor(t * FPS + 1e-6));
     const si = Math.min(7, Math.floor(t / BAR));
     ctx.save();
     ctx.globalAlpha = 0.7 * a;
@@ -1495,10 +1496,10 @@
     if (fb > 0.001) { out.fillStyle = `rgba(0,0,0,${clamp(fb)})`; out.fillRect(0, 0, W, H); }
 
     out.drawImage(b.vig, 0, 0);
-    hud(out, t);
+    hud(out, t, opt);
 
     if (opt.grain !== false) {
-      const f = Math.floor(t * FPS);
+      const f = opt.frame ?? Math.floor(t * FPS);
       out.save();
       out.globalCompositeOperation = 'overlay';
       out.globalAlpha = 0.07;

@@ -5,7 +5,9 @@
 //   node render.mjs --stills 0.5,3.2,7.9    individual frames -> build/stills/
 //   node render.mjs --sheet                 contact sheet of the whole reel
 //
-// Options: --workers N  --subframes N  --out file  --from S --to S
+//   node render.mjs --speed 0.5             the same film at half speed (30 s) -> aryodesk-half-speed.mp4
+//
+// Options: --workers N  --subframes N  --out file  --from S --to S (playback seconds)  --speed X
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -55,7 +57,9 @@ async function openPage() {
   return { browser, page };
 }
 
-const FPS = 60, DUR = 15, TOTAL = FPS * DUR;
+const FPS = 60, DUR = 15;
+const speed = +opt('speed', 1);
+const LEN = DUR / speed; // playback length in seconds
 const subframes = +opt('subframes', 8);
 const workers = +opt('workers', 4);
 
@@ -86,9 +90,10 @@ if (has('stills') || has('sheet')) {
 }
 
 // ---- full render
-const from = Math.round(+opt('from', 0) * FPS), to = Math.round(+opt('to', DUR) * FPS);
-const out = path.resolve(opt('out', path.join(ROOT, 'aryodesk.mp4')));
-const wav = path.join(BUILD, 'aryodesk.wav');
+const from = Math.round(+opt('from', 0) * FPS), to = Math.round(+opt('to', LEN) * FPS);
+const outName = speed === 1 ? 'aryodesk.mp4' : speed === 0.5 ? 'aryodesk-half-speed.mp4' : `aryodesk-speed${speed}.mp4`;
+const out = path.resolve(opt('out', path.join(ROOT, outName)));
+const wav = path.join(BUILD, speed === 1 ? 'aryodesk.wav' : `aryodesk-speed${speed}.wav`);
 const ff = ffmpegPath();
 const ffArgs = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-'];
 const withAudio = fs.existsSync(wav) && !has('no-audio');
@@ -125,7 +130,7 @@ await Promise.all(Array.from({ length: workers }, async () => {
     while (frames.size > workers * 6) await new Promise((r) => setTimeout(r, 20));
     const i = cursor++;
     if (i >= to) break;
-    const b64 = await page.evaluate(([i, s]) => window.renderFrame(i, { subframes: s }), [i, subframes]);
+    const b64 = await page.evaluate(([i, s, sp]) => window.renderFrame(i, { subframes: s, speed: sp }), [i, subframes, speed]);
     frames.set(i, Buffer.from(b64, 'base64'));
     flush();
   }
