@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>آریودسک · استوری ۱۵ ثانیه‌ای</title>
+<!-- «تا شما بفهمید، درست شده است» — پیش‌نمایش متحرک ۱۰۸۰×۱۹۲۰ از روی سناریوی استوری.
+     تمام صحنه‌ها تابعی از زمان‌اند: render(t). ?t=7.2 قاب ثابت می‌دهد. کلید S ناحیه‌ی امن را نشان می‌دهد.
+     نشان آریودسک موقت است؛ فایل برند در این مخزن نیست. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap">
+<style>
+  :root{
+    --bg:#050b12; --ink:#e9f6ff; --muted:#8aa3b5; --sky:#8fd8ff; --blue:#3aa0e0; --mint:#7ef0d0;
+    --ok:#4fe0a0; --warn:#f0b050; --panel:#0b1620; --line:rgba(143,216,255,.16);
+    --grad:linear-gradient(100deg,#8fd8ff 0%,#3aa0e0 50%,#7ef0d0 100%);
+    --font:Estedad,Vazirmatn,Tahoma,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#02060a;color:var(--ink);font-family:var(--font)}
+  body{display:flex;align-items:center;justify-content:center;padding-bottom:56px;overflow:hidden}
+  #wrap{position:relative;flex:none}
+  #frame{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;overflow:hidden;background:var(--bg);direction:rtl}
+  .ab{position:absolute}
+
+  #bg{position:absolute;inset:0;background:
+    radial-gradient(900px 760px at 50% 18%,rgba(58,160,224,.16),transparent 70%),
+    radial-gradient(760px 620px at 50% 100%,rgba(126,240,208,.07),transparent 70%),var(--bg)}
+  #blur{position:absolute;inset:0}
+  #world{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0}
+  #desk{position:absolute;inset:0;background:radial-gradient(700px 500px at 30% 25%,rgba(58,160,224,.10),transparent 70%),linear-gradient(#0c1a26,#06101a)}
+
+  /* taskbar: the tray icon sits next to the clock */
+  #task{position:absolute;left:0;top:1800px;width:1080px;height:120px;background:#09131d;border-top:1px solid var(--line)}
+  #start{position:absolute;left:36px;top:32px;width:56px;height:56px;border-radius:14px;background:rgba(143,216,255,.08)}
+  #tray{position:absolute;left:852px;top:32px;width:56px;height:56px;border-radius:12px}
+  .tic{width:40px;height:40px;margin:8px}
+  #clk2{position:absolute;left:930px;top:40px;width:110px;text-align:center;font-size:30px;color:var(--muted)}
+
+  /* windows */
+  .win{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden}
+  #err{left:160px;top:520px;width:760px;height:440px;opacity:0}
+  #err .eh{height:70px;display:flex;align-items:center;padding:0 28px;background:rgba(143,216,255,.06);font-size:28px;color:var(--muted)}
+  #err .eb{position:absolute;left:0;right:0;top:70px;bottom:0}
+  .ico{position:absolute;right:56px;top:52px;width:100px;height:100px}
+  .tt{position:absolute;right:56px;top:176px;font-size:60px;font-weight:900;white-space:nowrap}
+  .st{position:absolute;right:56px;top:262px;font-size:36px;color:var(--muted);white-space:nowrap}
+  .fb{position:absolute;left:56px;bottom:44px;padding:14px 30px;border-radius:999px;border:1px solid var(--line);color:var(--sky);font-size:30px;font-weight:700}
+
+  #tk{left:560px;top:1060px;width:480px;height:600px;opacity:0}
+  #tk .tkh{position:relative;height:96px;display:flex;align-items:center;gap:16px;padding:0 28px;border-bottom:1px solid var(--line)}
+  #tk .tkh .m{width:44px;height:44px;flex:none}
+  #tk .tkh b{display:block;font-size:30px;font-weight:900}
+  #tk .tkh small{display:block;font-size:22px;color:var(--muted)}
+  .rg{position:absolute;left:24px;top:8px;width:80px;height:80px;opacity:0}
+  #tk .msgs{position:absolute;left:0;right:0;top:110px;height:380px;padding:0 28px;display:flex;flex-direction:column;gap:22px}
+  .bub{position:relative;max-width:360px;padding:18px 24px;border-radius:26px;font-size:34px;line-height:1.5;opacity:0}
+  .me{align-self:flex-start;background:rgba(58,160,224,.22);border:1px solid rgba(143,216,255,.25);border-top-right-radius:8px}
+  .them{align-self:flex-end;background:#0f2433;border:1px solid var(--line);border-top-left-radius:8px}
+  #ap{display:inline-block;margin-top:14px;min-width:250px;text-align:center;padding:12px 24px;border-radius:999px;background:var(--blue);color:#021018;font-size:30px;font-weight:900}
+  #inp{position:absolute;left:20px;right:20px;bottom:20px;height:76px;border-radius:38px;border:1px solid var(--line);background:#081119;display:flex;align-items:center;padding:0 10px 0 26px;font-size:30px}
+  #typed{white-space:pre}
+  #ph{position:absolute;right:26px;color:var(--muted)}
+  #send{margin-right:auto;width:56px;height:56px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center}
+  #send svg{width:26px;height:26px}
+  #send path{fill:none;stroke:#021018;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+
+  /* pointers */
+  .pt{position:absolute;left:0;top:0;width:44px;height:44px;transform-origin:0 0;pointer-events:none;opacity:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+  .pt path{fill:#fff;stroke:#050b12;stroke-width:1.4;stroke-linejoin:round}
+  #rp path{fill:var(--mint)}
+  #rip{position:absolute;left:0;top:0;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:4px solid var(--sky);opacity:0}
+
+  /* screen-space overlay: missed calls, clock, report, mark */
+  .tb{position:absolute;left:330px;width:620px;height:76px;border-radius:38px;background:#0d1a25;border:1px solid rgba(240,176,80,.5);display:flex;align-items:center;gap:18px;padding:0 30px;font-size:34px;font-weight:700;color:#ffd9a0;opacity:0}
+  .tb i{width:18px;height:18px;border-radius:50%;background:var(--warn);flex:none}
+  #clock{left:440px;top:1370px;width:200px;height:200px;opacity:0}
+
+  #rep{left:110px;top:500px;width:860px;height:1000px;opacity:0}
+  .rh{position:absolute;right:60px;top:52px;font-size:62px;font-weight:900}
+  .rsub{position:absolute;right:60px;top:126px;font-size:30px;color:var(--muted)}
+  .rows{position:absolute;left:60px;right:60px;top:190px}
+  .row{display:flex;align-items:center;gap:22px;height:84px;border-bottom:1px solid var(--line);font-size:34px;opacity:0}
+  .row span{flex:1}
+  .row em{font-style:normal;font-size:28px;color:var(--muted)}
+  .row svg{width:40px;height:40px;flex:none}
+  .row path{fill:none;stroke:var(--ok);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .row.hi{border:1px solid rgba(126,240,208,.45);border-radius:18px;padding:0 20px;background:rgba(126,240,208,.08);border-bottom-color:rgba(126,240,208,.45)}
+  .row.hi path{stroke:var(--mint)}
+  .clab{position:absolute;left:60px;right:60px;top:650px;font-size:30px;color:var(--muted)}
+  .bars{position:absolute;left:60px;right:60px;bottom:60px;height:240px;display:flex;align-items:flex-end;gap:26px}
+  .bar{flex:1;height:0;border-radius:16px 16px 6px 6px;background:linear-gradient(#8fd8ff,#3aa0e0 70%,rgba(58,160,224,.35))}
+  .bar.hi{background:linear-gradient(#c4fff0,#7ef0d0 60%,rgba(126,240,208,.35))}
+  #mk{left:390px;top:650px;width:300px;height:300px;opacity:0}
+
+  /* type */
+  #scrim{position:absolute;left:0;right:0;top:0;height:640px;background:linear-gradient(rgba(5,11,18,.92),rgba(5,11,18,.55) 55%,rgba(5,11,18,0))}
+  #cap{position:absolute;left:80px;right:80px;top:280px;text-align:center;font-size:88px;font-weight:900;line-height:1.4;color:var(--ink);opacity:0;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+  #wm{position:absolute;left:0;right:0;top:968px;text-align:center;font-size:72px;font-weight:900;letter-spacing:.06em;direction:ltr;color:var(--ink);opacity:0}
+  #ttl{position:absolute;left:0;right:0;top:1130px;text-align:center;font-size:104px;font-weight:900;line-height:1.5;padding:0 60px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0}
+  #sub{position:absolute;left:0;right:0;top:1492px;text-align:center;font-size:46px;font-weight:700;color:var(--sky);opacity:0}
+  #fade{position:absolute;inset:0;background:var(--bg);opacity:0;pointer-events:none}
+
+  /* safe-zone guides (S) */
+  #guides{position:absolute;inset:0;pointer-events:none;display:none}
+  #guides.on{display:block}
+  #guides .z{position:absolute;left:0;right:0;background:repeating-linear-gradient(-45deg,rgba(255,90,90,.16) 0 10px,transparent 10px 20px)}
+  #guides .t{top:0;height:250px}
+  #guides .b{top:1580px;height:340px}
+  #guides span{position:absolute;left:24px;font-size:24px;color:#ff8f8f;background:rgba(0,0,0,.6);padding:4px 10px;border-radius:8px}
+
+  /* controls outside the frame */
+  #hud{position:fixed;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;justify-content:center;gap:22px;font-size:15px;color:#6f8799;background:#02060a;border-top:1px solid #0d1a25;direction:rtl}
+  #prog{position:absolute;left:0;top:-1px;height:2px;width:0;background:var(--blue)}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="frame">
+    <div id="bg"></div>
+    <div id="blur">
+      <div id="world">
+        <div id="desk"></div>
+        <div id="task">
+          <div id="start"></div>
+          <div id="tray"><svg class="tic" viewBox="0 0 64 64"><use href="#mark"/></svg></div>
+          <div id="clk2">۱۰:۴۲</div>
+        </div>
+
+        <div id="err" class="win">
+          <div class="eh">خطا در سیستم چاپ</div>
+          <div class="eb">
+            <svg id="eI" class="ico" viewBox="0 0 64 64">
+              <path d="M32 8 L58 54 H6 Z" fill="none" stroke="#f0b050" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M32 26 V40" stroke="#f0b050" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="32" cy="48" r="2.8" fill="#f0b050"/>
+            </svg>
+            <svg id="oI" class="ico" viewBox="0 0 64 64" style="opacity:0">
+              <circle cx="32" cy="32" r="28" fill="none" stroke="#4fe0a0" stroke-width="4"/>
+              <path d="M20 33 L28 41 L44 24" fill="none" stroke="#4fe0a0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div id="eT" class="tt">خطای پرینتر</div>
+            <div id="oT" class="tt" style="opacity:0">پرینتر آماده است</div>
+            <div id="eS" class="st">صف چاپ متوقف شده است.</div>
+            <div id="oS" class="st" style="opacity:0">صف چاپ آزاد شد.</div>
+            <div class="fb">تلاش مجدد</div>
+          </div>
+        </div>
+
+        <div id="tk" class="win">
+          <div class="tkh">
+            <svg class="m" viewBox="0 0 64 64"><use href="#mark"/></svg>
+            <div><b>آریودسک · تیکت</b><small>پشتیبانی فنی</small></div>
+            <svg id="ring" class="rg" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(143,216,255,.16)" stroke-width="6"/>
+              <circle id="arc" cx="40" cy="40" r="34" fill="none" stroke="#3aa0e0" stroke-width="6" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63" transform="rotate(-90 40 40)"/>
+              <circle cx="40" cy="40" r="7" fill="#8fd8ff" opacity=".8"/>
+            </svg>
+          </div>
+          <div class="msgs">
+            <div id="emp" class="bub me"></div>
+            <div id="exp" class="bub them">اجازه می‌دهید از راه دور وصل شوم؟<br><span id="ap">اجازه می‌دهم</span></div>
+          </div>
+          <div id="inp">
+            <span id="typed"></span>
+            <span id="ph">پیام بنویسید…</span>
+            <span id="send"><svg viewBox="0 0 24 24"><path d="M20 12H6M12 5l-7 7 7 7"/></svg></span>
+          </div>
+        </div>
+
+        <div id="rip"></div>
+        <svg id="cur" class="pt" viewBox="0 0 24 24"><path d="M2 2v17l5-4.5 3.5 7.5 3-1.4-3.5-7.3H17z"/></svg>
+        <svg id="rp" class="pt" viewBox="0 0 24 24"><path d="M2 2v17l5-4.5 3.5 7.5 3-1.4-3.5-7.3H17z"/></svg>
+      </div>
+
+      <div id="ov">
+        <div class="tb" style="top:1000px"><i></i>تماس بی‌پاسخ</div>
+        <div class="tb" style="top:1092px"><i></i>تماس بی‌پاسخ</div>
+        <div class="tb" style="top:1184px"><i></i>تماس بی‌پاسخ</div>
+        <div class="tb" style="top:1276px"><i></i>تماس بی‌پاسخ</div>
+
+        <svg id="clock" class="ab" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="92" fill="#0d1a25" stroke="#f0b050" stroke-width="8"/>
+          <g stroke="rgba(240,176,80,.5)" stroke-width="4" stroke-linecap="round">
+            <line x1="100" y1="22" x2="100" y2="34"/><line x1="178" y1="100" x2="166" y2="100"/>
+            <line x1="100" y1="178" x2="100" y2="166"/><line x1="22" y1="100" x2="34" y2="100"/>
+          </g>
+          <g id="hand"><line x1="100" y1="100" x2="100" y2="34" stroke="#f0b050" stroke-width="8" stroke-linecap="round"/></g>
+          <circle cx="100" cy="100" r="9" fill="#f0b050"/>
+        </svg>
+
+        <div id="rep" class="win">
+          <div class="rh">گزارش ماه</div>
+          <div class="rsub">آخرین تیکت‌ها، همه حل‌شده</div>
+          <div class="rows">
+            <div class="row"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>پرینتر</span><em>حل شد</em></div>
+            <div class="row"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>ورود به سیستم</span><em>حل شد</em></div>
+            <div class="row"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>شبکه‌ی دفتر</span><em>حل شد</em></div>
+            <div class="row"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>نرم‌افزار حسابداری</span><em>حل شد</em></div>
+            <div id="nr" class="row hi"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>پرینتر</span><em>از راه دور</em></div>
+          </div>
+          <div class="clab">میانگین زمان پاسخ</div>
+          <div class="bars">
+            <div class="bar" style="height:0"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar hi"></div>
+          </div>
+        </div>
+
+        <svg id="mk" class="ab" viewBox="0 0 64 64"><use href="#mark"/></svg>
+      </div>
+    </div>
+
+    <div id="scrim"></div>
+    <div id="cap"></div>
+    <div id="wm">ArioDesk</div>
+    <div id="ttl">تا شما بفهمید،<br>درست شده است.</div>
+    <div id="sub">آریودسک · درخواست جلسه‌ی مشاوره</div>
+    <div id="fade"></div>
+
+    <div id="guides">
+      <div class="z t"><span style="top:12px">ناحیه‌ی امن بالا · ۲۵۰ پیکسل</span></div>
+      <div class="z b"><span style="bottom:12px">ناحیه‌ی امن پایین · ۳۴۰ پیکسل</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="hud">
+  <div id="prog"></div>
+  <span id="hudT"></span><span id="hudS"></span>
+  <span>فاصله: پخش و توقف · ← → گام به گام · S ناحیه‌ی امن</span>
+</div>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <linearGradient id="gm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fd8ff"/><stop offset=".5" stop-color="#3aa0e0"/><stop offset="1" stop-color="#7ef0d0"/>
+    </linearGradient>
+    <symbol id="mark" viewBox="0 0 64 64">
+      <image href="assets/ariodesk-logo.png" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script>
+(() => {
+  const DUR = 15;
+
+  // ---- copy & constants (from the scenario) ----
+  const CAPS = [
+    [0, 2, 'رایانه‌ی کارمندتان خراب شد؟'],
+    [2, 4.5, 'انتظار یعنی هزینه.'],
+    [4.5, 7, 'یک کلیک کنار ساعت.'],
+    [7, 10, 'از راه دور، با اجازه‌ی خودش.'],
+    [10, 12.5, 'و گزارشش روی میز شما.'],
+  ];
+  const SCENES = [[0, 'خرابی'], [2, 'انتظار'], [4.5, 'کلیک'], [7, 'اجازه'], [10, 'گزارش'], [12.5, 'برند']];
+  const MSG = Array.from('پرینتر کار نمی‌کند');
+  const BARS = [0.42, 0.58, 0.5, 0.74, 0.66, 1];
+  const RING_C = 2 * Math.PI * 34;
+  // camera: [t, scale, focusX, focusY] — world point w lands at 540 + s * (w - focus)
+  const CAM = [[0, 1, 540, 960], [4.5, 1, 540, 960], [5.3, 1.5, 720, 1280], [8.5, 1.5, 720, 1280],
+               [9.3, 1, 540, 960], [10, 1, 540, 960], [10.9, 0.72, 540, 960]];
+  const WORLD_OP = [[0, 1], [9.9, 1], [10.7, 0.1], [11.4, 0]];
+
+  // ---- helpers ----
+  const $ = (id) => document.getElementById(id);
+  const E = {};
+  document.querySelectorAll('[id]').forEach((n) => (E[n.id] = n));
+  const tbs = [...document.querySelectorAll('.tb')];
+  const rows = [...document.querySelectorAll('.row')];
+  const bars = [...document.querySelectorAll('.bar')];
+
+  const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const seg = (t, a, b) => (b <= a ? (t >= b ? 1 : 0) : clamp01((t - a) / (b - a)));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const io = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const out = (x) => 1 - Math.pow(1 - x, 3);
+  const back = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const bump = (x) => Math.sin(Math.PI * clamp01(x));
+  const setText = (n, s) => { if (n.textContent !== s) n.textContent = s; };
+  const fa = (s) => String(s).replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]).replace('.', '٫');
+
+  // keyframes: each entry is [t, v1, v2, ...]; values ease (in/out cubic) between keys
+  function trackN(t, keys) {
+    if (t <= keys[0][0]) return keys[0].slice(1);
+    for (let i = 1; i < keys.length; i++) {
+      if (t <= keys[i][0]) {
+        const a = keys[i - 1], b = keys[i], k = io(seg(t, a[0], b[0]));
+        return a.slice(1).map((v, j) => lerp(v, b[j + 1], k));
+      }
+    }
+    return keys[keys.length - 1].slice(1);
+  }
+
+  // distance from the world's origin to the centre of an element, using layout offsets (ignores transforms)
+  function anchor(n) {
+    let x = n.offsetWidth / 2, y = n.offsetHeight / 2;
+    for (let p = n; p && p !== E.world; p = p.offsetParent) { x += p.offsetLeft; y += p.offsetTop; }
+    return [x, y];
+  }
+
+  let CURK, RPK;
+  const P = {};
+  function init() {
+    P.tray = anchor(E.tray);
+    P.input = anchor(E.inp);
+    P.send = anchor(E.send);
+    P.ap = anchor(E.ap);
+    P.err = [540, 740];
+    // employee pointer: parks on the error window, clicks the tray icon, types, sends, approves
+    CURK = [
+      [0, 880, 600], [4.6, 880, 600], [5.5, ...P.tray], [5.7, ...P.tray],
+      [6.0, ...P.input], [6.6, ...P.input], [6.75, ...P.send], [8.2, ...P.send],
+      [8.9, ...P.ap], [9.0, ...P.ap],
+    ];
+    // remote-support pointer: from the approve button to the error window
+    RPK = [[9.1, ...P.ap], [9.2, ...P.ap], [9.9, ...P.err], [10.2, ...P.err]];
+    E.emp.textContent = MSG.join('');
+    fit();
+  }
+
+  // ---- the film as a function of time ----
+  function render(t) {
+    // B: the frame softens while the calls ring out, then snaps sharp at the cut
+    const bl = t >= 2 && t < 4.5 ? 9 * io(seg(t, 2, 4.5)) : 0;
+    E.blur.style.filter = bl > 0.05 ? `blur(${bl.toFixed(2)}px)` : 'none';
+
+    // camera: zoom toward the tray, pull back for the fix, then out to the report
+    const [s, fx, fy] = trackN(t, CAM);
+    E.world.style.transform = `translate(${(540 - s * fx).toFixed(2)}px, ${(960 - s * fy).toFixed(2)}px) scale(${s.toFixed(4)})`;
+    E.world.style.opacity = trackN(t, WORLD_OP)[0].toFixed(3);
+
+    // A: the error window trembles on a decaying shake and pops in
+    const shake = t < 2 ? Math.sin(t * 70) * 10 * (1 - t / 2) : 0;
+    // while the camera is on the tray the window steps back, so the caption reads cleanly
+    const dim = 1 - 0.75 * Math.min(io(seg(t, 4.5, 5.2)), 1 - io(seg(t, 8.6, 9.3)));
+    E.err.style.opacity = (seg(t, 0, 0.15) * dim).toFixed(3);
+    E.err.style.transform = `translateX(${shake.toFixed(2)}px) scale(${lerp(0.9, 1, back(seg(t, 0, 0.35))).toFixed(4)})`;
+
+    // D: the window turns green once the employee approves
+    const ok = io(seg(t, 9.55, 9.95));
+    E.eI.style.opacity = (1 - ok).toFixed(3); E.eT.style.opacity = (1 - ok).toFixed(3); E.eS.style.opacity = (1 - ok).toFixed(3);
+    E.oI.style.opacity = ok.toFixed(3);       E.oT.style.opacity = ok.toFixed(3);       E.oS.style.opacity = ok.toFixed(3);
+    E.err.style.borderColor = ok > 0 ? `rgba(79,224,160,${(0.15 + 0.5 * ok).toFixed(3)})` : '';
+    E.err.style.boxShadow = ok > 0
+      ? `0 0 0 ${(2 * ok).toFixed(2)}px rgba(79,224,160,${(0.6 * ok).toFixed(3)}), 0 30px 80px rgba(0,0,0,.45)`
+      : '';
+
+    // B: missed-call bubbles slide in from the right, then the clock spins up
+    tbs.forEach((n, i) => {
+      const a = 2.05 + i * 0.3, p = back(seg(t, a, a + 0.35)), hide = 1 - seg(t, 4.4, 4.5);
+      n.style.opacity = (seg(t, a, a + 0.12) * hide).toFixed(3);
+      n.style.transform = `translateX(${((1 - p) * 90).toFixed(1)}px) scale(${lerp(0.9, 1, p).toFixed(4)})`;
+    });
+    E.clock.style.opacity = (seg(t, 2.0, 2.2) * (1 - seg(t, 4.4, 4.5))).toFixed(3);
+    const tau = Math.max(0, t - 2);
+    E.hand.setAttribute('transform', `rotate(${(1000 * tau * tau).toFixed(1)} 100 100)`); // accelerating: 0.5 * 2000 * tau^2
+
+    // captions
+    const ci = CAPS.findIndex(([a, b]) => t >= a && t < b);
+    if (ci >= 0) {
+      const [a, b, txt] = CAPS[ci];
+      if (E.cap.dataset.i !== String(ci)) { E.cap.dataset.i = ci; E.cap.textContent = txt; }
+      E.cap.style.opacity = Math.min(seg(t, a, a + 0.25), 1 - seg(t, b - 0.2, b)).toFixed(3);
+    } else {
+      E.cap.style.opacity = '0';
+    }
+
+    // C: the ticket window pops up above the tray icon, the employee types and sends
+    const pIn = seg(t, 5.6, 5.9), pOut = seg(t, 9.7, 9.95);
+    E.tk.style.opacity = (seg(t, 5.6, 5.75) * (1 - pOut)).toFixed(3);
+    E.tk.style.transform = `scale(${(lerp(0.93, 1, back(pIn)) * lerp(1, 0.94, pOut)).toFixed(4)})`;
+    const typedN = Math.round(seg(t, 6.0, 6.6) * MSG.length);
+    setText(E.typed, t >= 6.8 ? '' : MSG.slice(0, typedN).join(''));
+    E.ph.style.opacity = t < 6.0 || t >= 6.8 ? '1' : '0';
+    const em = seg(t, 6.85, 7.0);
+    E.emp.style.opacity = em.toFixed(3);
+    E.emp.style.transform = `translateY(${((1 - out(em)) * 14).toFixed(1)}px)`;
+
+    // the SLA ring starts when the ticket is sent, and closes before it fills
+    E.ring.style.opacity = (seg(t, 6.8, 6.9) * (1 - seg(t, 8.5, 8.75))).toFixed(3);
+    E.arc.setAttribute('stroke-dashoffset', (RING_C * (1 - clamp01((t - 6.8) * 0.3))).toFixed(2));
+    E.arc.setAttribute('stroke', t >= 8.4 ? '#4fe0a0' : '#3aa0e0');
+
+    // D: expert reply arrives, the employee taps "اجازه می‌دهم"
+    const ex = seg(t, 7.6, 7.8);
+    E.exp.style.opacity = ex.toFixed(3);
+    E.exp.style.transform = `translateX(${((1 - ex) * -24).toFixed(1)}px)`;
+    E.ap.style.opacity = seg(t, 8.0, 8.2).toFixed(3);
+    E.ap.style.transform = `scale(${(1 - 0.06 * bump(seg(t, 9.0, 9.2))).toFixed(4)})`;
+    const done = t >= 9.05;
+    E.ap.style.background = done ? 'var(--ok)' : '';
+    setText(E.ap, done ? 'تأیید شد' : 'اجازه می‌دهم');
+
+    // C: the click on the tray icon
+    const rk = seg(t, 5.5, 5.9);
+    E.rip.style.opacity = t >= 5.5 && t < 5.9 ? ((1 - rk) * 0.9).toFixed(3) : '0';
+    E.rip.style.transform = `translate(${P.tray[0]}px, ${P.tray[1]}px) scale(${(0.4 + rk * 1.6).toFixed(3)})`;
+
+    // pointers
+    const [cx, cy] = trackN(t, CURK);
+    E.cur.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`;
+    E.cur.style.opacity = (seg(t, 0, 0.2) * (1 - seg(t, 9.05, 9.15))).toFixed(3);
+    const [rx, ry] = trackN(t, RPK);
+    E.rp.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
+    E.rp.style.opacity = (seg(t, 9.1, 9.2) * (1 - seg(t, 10.0, 10.2))).toFixed(3);
+
+    // E: the ticket becomes a row in the monthly report, the bars rise
+    E.rep.style.opacity = (seg(t, 10.2, 10.7) * (1 - seg(t, 12.5, 12.9))).toFixed(3);
+    rows.forEach((r, i) => {
+      const k = out(seg(t, i < 4 ? 10.3 + i * 0.12 : 10.75, i < 4 ? 10.55 + i * 0.12 : 11.0));
+      r.style.opacity = k.toFixed(3);
+      r.style.transform = `translateX(${((1 - k) * (i < 4 ? 40 : 60)).toFixed(1)}px)`;
+    });
+    bars.forEach((b, j) => {
+      const k = out(seg(t, 10.9 + j * 0.1, 11.6 + j * 0.1));
+      b.style.height = (BARS[j] * 240 * k).toFixed(1) + 'px';
+    });
+
+    // F: the card collapses into the mark, the title resolves
+    const col = io(seg(t, 12.5, 13.0));
+    E.rep.style.transform = `translateY(${(-200 * col).toFixed(1)}px) scale(${lerp(1, 0.26, col).toFixed(4)})`;
+    const mkK = back(seg(t, 12.8, 13.4));
+    E.mk.style.opacity = seg(t, 12.8, 13.0).toFixed(3);
+    E.mk.style.transform = `scale(${lerp(0.6, 1, mkK).toFixed(4)})`;
+    const wk = out(seg(t, 13.0, 13.4));
+    E.wm.style.opacity = wk.toFixed(3);
+    E.wm.style.transform = `translateY(${((1 - wk) * 16).toFixed(1)}px)`;
+    const tk2 = out(seg(t, 13.1, 13.5));
+    E.ttl.style.opacity = tk2.toFixed(3);
+    E.ttl.style.transform = `translateY(${((1 - tk2) * 30).toFixed(1)}px)`;
+    const sk = out(seg(t, 13.6, 14.0));
+    E.sub.style.opacity = sk.toFixed(3);
+    E.sub.style.transform = `translateY(${((1 - sk) * 20).toFixed(1)}px)`;
+
+    // loop: fade to the opening background so the repeat has no jump
+    E.fade.style.opacity = seg(t, 14.45, 14.98).toFixed(3);
+
+    // controls
+    const si = SCENES.reduce((k, [a], i) => (t >= a ? i : k), 0);
+    setText(E.hudT, `${fa(t.toFixed(1))} / ${fa(DUR)} ثانیه`);
+    setText(E.hudS, `${fa(si + 1)} · ${SCENES[si][1]}`);
+    E.prog.style.width = (t / DUR * 100).toFixed(2) + '%';
+  }
+
+  // ---- fit the 9:16 frame into the window ----
+  function fit() {
+    const s = Math.min(innerWidth / 1080, (innerHeight - 56) / 1920);
+    E.wrap.style.width = 1080 * s + 'px';
+    E.wrap.style.height = 1920 * s + 'px';
+    E.frame.style.transform = `scale(${s})`;
+  }
+  addEventListener('resize', fit);
+
+  // ---- transport ----
+  const params = new URLSearchParams(location.search);
+  const frozen = params.has('t');
+  let playing = !frozen;
+  let base = frozen ? Number(params.get('t')) || 0 : 0;
+  let startAt = performance.now();
+  const now = () => (playing ? (base + (performance.now() - startAt) / 1000) % DUR : base);
+  const play = () => { if (!playing) { startAt = performance.now(); playing = true; } };
+  const pause = () => { if (playing) { base = now(); playing = false; } };
+  const toggle = () => (playing ? pause() : play());
+  const seek = (dt) => { const c = now(); pause(); base = (((c + dt) % DUR) + DUR) % DUR; };
+
+  E.frame.addEventListener('click', toggle);
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { e.preventDefault(); toggle(); }
+    else if (e.key === 'ArrowRight') seek(e.shiftKey ? 1 : 1 / 30);
+    else if (e.key === 'ArrowLeft') seek(e.shiftKey ? -1 : -1 / 30);
+    else if (e.key === 's' || e.key === 'S') E.guides.classList.toggle('on');
+  });
+
+  // capture hook: when frame.dataset.manual is set, an external driver calls window.reel.render(t) itself
+  function loop() { if (!E.frame.dataset.manual) render(now()); requestAnimationFrame(loop); }
+
+  fit();
+  Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() => {
+    init();
+    requestAnimationFrame(loop);
+  });
+  window.reel = { render, DUR };
+})();
+</script>
+</body>
+</html>
