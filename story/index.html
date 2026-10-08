@@ -98,8 +98,9 @@
   /* type */
   #scrim{position:absolute;left:0;right:0;top:0;height:640px;background:linear-gradient(rgba(5,11,18,.92),rgba(5,11,18,.55) 55%,rgba(5,11,18,0))}
   #cap{position:absolute;left:80px;right:80px;top:280px;text-align:center;font-size:88px;font-weight:900;line-height:1.4;color:var(--ink);opacity:0;text-shadow:0 4px 30px rgba(0,0,0,.6)}
-  #ttl{position:absolute;left:0;right:0;top:1040px;text-align:center;font-size:104px;font-weight:900;line-height:1.5;padding:0 60px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0}
-  #sub{position:absolute;left:0;right:0;top:1350px;text-align:center;font-size:46px;font-weight:700;color:var(--sky);opacity:0}
+  #wm{position:absolute;left:0;right:0;top:968px;text-align:center;font-size:72px;font-weight:900;letter-spacing:.06em;direction:ltr;color:var(--ink);opacity:0}
+  #ttl{position:absolute;left:0;right:0;top:1130px;text-align:center;font-size:104px;font-weight:900;line-height:1.5;padding:0 60px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0}
+  #sub{position:absolute;left:0;right:0;top:1492px;text-align:center;font-size:46px;font-weight:700;color:var(--sky);opacity:0}
   #fade{position:absolute;inset:0;background:var(--bg);opacity:0;pointer-events:none}
 
   /* safe-zone guides (S) */
@@ -213,6 +214,7 @@
 
     <div id="scrim"></div>
     <div id="cap"></div>
+    <div id="wm">ArioDesk</div>
     <div id="ttl">تا شما بفهمید،<br>درست شده است.</div>
     <div id="sub">آریودسک · درخواست جلسه‌ی مشاوره</div>
     <div id="fade"></div>
@@ -235,10 +237,8 @@
     <linearGradient id="gm" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#8fd8ff"/><stop offset=".5" stop-color="#3aa0e0"/><stop offset="1" stop-color="#7ef0d0"/>
     </linearGradient>
-    <!-- نشان موقت -->
     <symbol id="mark" viewBox="0 0 64 64">
-      <path d="M32 6 L56 32 L32 58 L8 32 Z" fill="none" stroke="url(#gm)" stroke-width="6" stroke-linejoin="round"/>
-      <circle cx="32" cy="32" r="8" fill="url(#gm)"/>
+      <image href="assets/ariodesk-logo.png" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
   </defs>
 </svg>
@@ -425,6 +425,9 @@
     const mkK = back(seg(t, 12.8, 13.4));
     E.mk.style.opacity = seg(t, 12.8, 13.0).toFixed(3);
     E.mk.style.transform = `scale(${lerp(0.6, 1, mkK).toFixed(4)})`;
+    const wk = out(seg(t, 13.0, 13.4));
+    E.wm.style.opacity = wk.toFixed(3);
+    E.wm.style.transform = `translateY(${((1 - wk) * 16).toFixed(1)}px)`;
     const tk2 = out(seg(t, 13.1, 13.5));
     E.ttl.style.opacity = tk2.toFixed(3);
     E.ttl.style.transform = `translateY(${((1 - tk2) * 30).toFixed(1)}px)`;
@@ -471,7 +474,8 @@
     else if (e.key === 's' || e.key === 'S') E.guides.classList.toggle('on');
   });
 
-  function loop() { render(now()); requestAnimationFrame(loop); }
+  // capture hook: when frame.dataset.manual is set, an external driver calls window.reel.render(t) itself
+  function loop() { if (!E.frame.dataset.manual) render(now()); requestAnimationFrame(loop); }
 
   fit();
   Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() => {
